@@ -1,7 +1,4 @@
 import requests
-from test_json import test_json_1
-from test_json import test_json_2
-
 
 url = "https://www.okx.com/priapi/v5/rubik/app/public/new-coin-rank?t=1661446882241&type=USDC"
 input_a = requests.get(url).json()['data'][0]['online']
