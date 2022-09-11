@@ -13,7 +13,6 @@ def new_coin_alert(list_of_coins: list, n_of_coins: int):
             new_coin = [x for x in new_list_of_coins if x not in list_of_coins]
             # function to call a traiding bot
             print("NEW COIN ALERT")
-        print("SAME SHIT")
 
 
 new_coin_alert(list_of_coins=input_a, n_of_coins=input_b)
