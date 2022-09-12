@@ -16,9 +16,9 @@ class MarketMaker(OkexBot):
 
     def open_position(self, size_of_balance: float):
         new_coin_id = self.details[0]["instId"]
-        usdc_to_order = float(self.get_balance('USDC')) * size_of_balance
+        usdt_to_order = float(self.get_balance('USDT')) * size_of_balance
         t0 = time.time()
-        order = self.place_market_order(pair=new_coin_id, side='buy', amount=usdc_to_order).json()["data"]
+        order = self.place_market_order(pair=new_coin_id, side='buy', amount=usdt_to_order).json()["data"]
         t1 = time.time() - t0
         print(t1)
         if order[0]['ordId']:
