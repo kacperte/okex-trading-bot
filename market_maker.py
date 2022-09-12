@@ -40,4 +40,3 @@ class MarketMaker(OkexBot):
         order = self.place_market_order(pair=coin_id, side='sell', amount=quantity_of_tokene_to_sell).json()["data"]
         if not order[0]['ordId']:
             print("ERROR - Failed to complete the transaction")
-

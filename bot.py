@@ -46,7 +46,8 @@ class OkexBot:
     def get_balance(self, currency: str):
         url = self.baseURL + "/api/v5/account/balance"
         header = self.get_header("GET", "/api/v5/account/balance")
-        for obj in requests.get(url, headers=header).json()['data'][0]['details']:
+        response = requests.get(url, headers=header).json()['data'][0]['details']
+        for obj in response:
             if obj['ccy'] != currency:
                 continue
 
