@@ -5,9 +5,9 @@ import requests
 import json
 from decimal import Decimal
 
-APIKEY = ""
-APISECRET = ""
-PASS = ""
+APIKEY = "3d4ae0a2-6a2d-46f6-ad6c-1d74eb30c085"
+APISECRET = "C81EF5582B8656D5F9666BB6CDF4ECF8"
+PASS = "AZuM25SvkfvKBA3!"
 
 
 class OkexBot:
@@ -77,6 +77,3 @@ class OkexBot:
         header = self.get_header("GET", "/api/v5/trade/fills")
         balance_status = requests.get(url, headers=header).json()
         return balance_status["data"]
-
-bot = OkexBot(APIKEY, APISECRET, PASS)
-print(bot.get_info()[0]['fillPx'])

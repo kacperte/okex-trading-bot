@@ -1,4 +1,5 @@
 from bot import OkexBot, APISECRET, APIKEY, PASS
+import time
 
 new_coin = [{
     "changePerDay24h": "0.0032",
@@ -25,24 +26,28 @@ class MarketMaker(OkexBot):
         new_coin_id = self.details[0]["instId"]
         amount_of_usdc = [token['balance'] for token in self.check_balance() if token['id'] == "USDC"]
         usdc_to_order = float(amount_of_usdc[0]) * size_of_balance
+        t0 = time.time()
         order = self.place_market_order(pair=new_coin_id, side='buy', amount=usdc_to_order).json()["data"]
+        t1 = time.time() - t0
+        print(t1)
         if len(order[0]['ordId']) < 1:
             print("ERROR - Failed to complete the transaction")
-            print(order)
         else:
             print(f"Open succesfull new position - order number: {order[0]['ordId']}")
-            order_details = self.get_info()[0]
-            print(ord)
-            # self.monitor_position()
+            time.sleep(5)
+            order_info = self.get_info()[0]
+            self.monitor_position(order_info=order_info, size_of_profit=2, size_of_losses=0.8)
 
-    def monitor_position(self, order_info: list, size_of_profit: int, size_of_losses: int):
-        purchase_price = float(order_info[0]['fillSz'])
+    def monitor_position(self, order_info: dict, size_of_profit: float, size_of_losses: float):
+        print(f"Start monitoring")
+        purchase_price = float(order_info['fillPx'])
         while True:
-            current_price = self.check_price(order_info['instId'])
-            if current_price >= purchase_price * (1 + size_of_profit):
+            # 200 %
+            current_price = float(self.check_price(order_info['instId']))
+            if current_price >= purchase_price * size_of_profit:
                 self.close_position(coin_id=order_info['instId'], size_of_sell=1)
-            # what losses are acceptable??
-            elif current_price <= purchase_price * (1 - size_of_losses):
+            # 53 %
+            elif current_price <= purchase_price * size_of_losses:
                 self.close_position(coin_id=order_info['instId'], size_of_sell=1)
 
     def close_position(self, coin_id: str, size_of_sell: float):
@@ -57,4 +62,5 @@ class MarketMaker(OkexBot):
 
 
 agent = MarketMaker(details=new_coin, APISECRET=APISECRET, APIKEY=APIKEY, PASS=PASS)
-trans = agent.open_position(0.8)
+#trans = agent.open_position(size_of_balance=0.3)
+#trans = agent.close_position(coin_id="LINK-USDC", size_of_sell=1)
