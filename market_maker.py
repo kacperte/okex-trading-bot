@@ -1,5 +1,11 @@
 from bot import OkexBot, APISECRET, APIKEY, PASS
 import time
+from os import getenv
+
+SIZE_OF_PROFIT = float(getenv("SIZE_OF_PROFIT"))
+SIZE_OF_LOSSES = float(getenv("SIZE_OF_LOSSES"))
+SIZE_OF_SELL_POSITIVE = float(getenv("SIZE_OF_SELL_POSITIVE"))
+SIZE_OF_SELL_NEGATIVE = float(getenv("SIZE_OF_SELL_NEGATIVE"))
 
 
 class MarketMaker(OkexBot):
@@ -19,7 +25,7 @@ class MarketMaker(OkexBot):
             print(f"Open succesfull new position - order number: {order[0]['ordId']}")
             time.sleep(5)
             order_info = self.get_info()[0]
-            self.monitor_position(order_info=order_info, size_of_profit=2, size_of_losses=0.8)
+            self.monitor_position(order_info=order_info, size_of_profit=SIZE_OF_PROFIT, size_of_losses=SIZE_OF_LOSSES)
         else:
             print("ERROR - Failed to complete the transaction")
 
@@ -29,9 +35,9 @@ class MarketMaker(OkexBot):
         while True:
             current_price = float(self.check_price(order_info['instId']))
             if current_price >= purchase_price * size_of_profit:
-                self.close_position(coin_id=order_info['instId'], size_of_sell=0.5)
+                self.close_position(coin_id=order_info['instId'], size_of_sell=SIZE_OF_SELL_POSITIVE)
             elif current_price <= purchase_price * size_of_losses:
-                self.close_position(coin_id=order_info['instId'], size_of_sell=1)
+                self.close_position(coin_id=order_info['instId'], size_of_sell=SIZE_OF_SELL_NEGATIVE)
 
     def close_position(self, coin_id: str, size_of_sell: float):
         coin_id = coin_id.split("-")[0]
