@@ -1,19 +1,6 @@
 from bot import OkexBot, APISECRET, APIKEY, PASS
 import time
 
-new_coin = [{
-    "changePerDay24h": "0.0032",
-    "changePerDayUtc0": "0.0399",
-    "changePerDayUtc8": "-0.0011",
-    "icon": "https://static.coinall.ltd/cdn/announce/20220901/1662021138108b7501e58-6ece-4483-88b8-38c576e79017.png",
-    "instId": "LINK-USDC",
-    "instType": "SPOT",
-    "lastPrice": "1.878",
-    "onlineTs": "1661149481000",
-    "turnOver24h": "1032005.7397",
-    "volume24h": "552933.5601"
-}]
-
 
 class MarketMaker(OkexBot):
 
@@ -51,7 +38,6 @@ class MarketMaker(OkexBot):
         quantity_of_token = self.get_balance(coin_id)
         quantity_of_tokene_to_sell = float(quantity_of_token) * size_of_sell
         order = self.place_market_order(pair=coin_id, side='sell', amount=quantity_of_tokene_to_sell).json()["data"]
-        if len(order[0]['ordId']) < 1:
+        if not order[0]['ordId']:
             print("ERROR - Failed to complete the transaction")
-        # send notification ??
 

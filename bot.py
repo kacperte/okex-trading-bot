@@ -4,10 +4,12 @@ import hmac
 import requests
 import json
 from decimal import Decimal
+from os import getenv
 
-APIKEY = "3d4ae0a2-6a2d-46f6-ad6c-1d74eb30c085"
-APISECRET = "C81EF5582B8656D5F9666BB6CDF4ECF8"
-PASS = "AZuM25SvkfvKBA3!"
+
+APIKEY = getenv("APIKEY")
+APISECRET = getenv("APISECRET")
+PASS = getenv("PASS")
 
 
 class OkexBot:
@@ -29,26 +31,22 @@ class OkexBot:
     @staticmethod
     def signature(timestamp, method, request_path, body, secret_key):
         message = timestamp + method + request_path + body
-        mac = hmac.new(bytes(secret_key, encoding='utf8'), bytes(message, encoding='utf-8'), digestmod='sha256')
-        output = mac.digest()
-        return base64.b64encode(output)
+        return base64.b64encode(hmac.new(bytes(secret_key, encoding='utf8'), bytes(message, encoding='utf-8'), digestmod='sha256').digest())
 
     def get_header(self, request='GET', endpoint='', body=''):
         cur_time = self.get_time()
         return {
             'CONTENT-TYPE': "application/json",
-            'OK-ACCESS-KEY': APIKEY,
-            'OK-ACCESS-SIGN': self.signature(cur_time, request, endpoint, body, APISECRET),
+            'OK-ACCESS-KEY': self.apikey,
+            'OK-ACCESS-SIGN': self.signature(cur_time, request, endpoint, body, self.apikey),
             'OK-ACCESS-TIMESTAMP': cur_time,
-            'OK-ACCESS-PASSPHRASE': PASS,
+            'OK-ACCESS-PASSPHRASE': self.password,
         }
 
     def get_balance(self, currency: str):
         url = self.baseURL + "/api/v5/account/balance"
         header = self.get_header("GET", "/api/v5/account/balance")
-        response = requests.get(url, headers=header).json()['data'][0]['details']
-        balance_status = dict()
-        for obj in response:
+        for obj in requests.get(url, headers=header).json()['data'][0]['details']:
             if obj['ccy'] != currency:
                 continue
 
