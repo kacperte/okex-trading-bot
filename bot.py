@@ -78,7 +78,5 @@ class OkexBot:
         balance_status = requests.get(url, headers=header).json()
         return balance_status["data"]
 
-
-bot = OkexBot(APIKEY=APIKEY, APISECRET=APISECRET, PASS=PASS)
-print(bot.get_info())
-
+bot = OkexBot(APIKEY, APISECRET, PASS)
+print(bot.get_info()[0]['fillPx'])
