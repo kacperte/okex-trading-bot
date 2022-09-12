@@ -38,7 +38,7 @@ class OkexBot:
         return {
             'CONTENT-TYPE': "application/json",
             'OK-ACCESS-KEY': self.apikey,
-            'OK-ACCESS-SIGN': self.signature(cur_time, request, endpoint, body, self.apikey),
+            'OK-ACCESS-SIGN': self.signature(cur_time, request, endpoint, body, self.apisecret),
             'OK-ACCESS-TIMESTAMP': cur_time,
             'OK-ACCESS-PASSPHRASE': self.password,
         }
