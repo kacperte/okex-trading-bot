@@ -60,7 +60,3 @@ class MarketMaker(OkexBot):
             print("ERROR - Failed to complete the transaction")
         # send notification ??
 
-
-agent = MarketMaker(details=new_coin, APISECRET=APISECRET, APIKEY=APIKEY, PASS=PASS)
-#trans = agent.open_position(size_of_balance=0.3)
-#trans = agent.close_position(coin_id="LINK-USDC", size_of_sell=1)
