@@ -28,32 +28,29 @@ class MarketMaker(OkexBot):
         order = self.place_market_order(pair=new_coin_id, side='buy', amount=usdc_to_order).json()["data"]
         t1 = time.time() - t0
         print(t1)
-        if len(order[0]['ordId']) < 1:
-            print("ERROR - Failed to complete the transaction")
-        else:
+        if order[0]['ordId']:
             print(f"Open succesfull new position - order number: {order[0]['ordId']}")
             time.sleep(5)
             order_info = self.get_info()[0]
             self.monitor_position(order_info=order_info, size_of_profit=2, size_of_losses=0.8)
+        else:
+            print("ERROR - Failed to complete the transaction")
 
     def monitor_position(self, order_info: dict, size_of_profit: float, size_of_losses: float):
         print(f"Start monitoring")
         purchase_price = float(order_info['fillPx'])
         while True:
-            # 200 %
             current_price = float(self.check_price(order_info['instId']))
             if current_price >= purchase_price * size_of_profit:
-                self.close_position(coin_id=order_info['instId'], size_of_sell=1)
-            # 53 %
+                self.close_position(coin_id=order_info['instId'], size_of_sell=0.5)
             elif current_price <= purchase_price * size_of_losses:
                 self.close_position(coin_id=order_info['instId'], size_of_sell=1)
 
     def close_position(self, coin_id: str, size_of_sell: float):
-        quantity_of_token = [token['balance'] for token in self.check_balance() if token['id'] == coin_id.split("-")[0]]
-        print(quantity_of_token)
-        quantity_of_tokene_to_sell = float(quantity_of_token[0]) * size_of_sell
+        coin_id = coin_id.split("-")[0]
+        quantity_of_token = self.get_balance(coin_id)
+        quantity_of_tokene_to_sell = float(quantity_of_token) * size_of_sell
         order = self.place_market_order(pair=coin_id, side='sell', amount=quantity_of_tokene_to_sell).json()["data"]
-        print(order)
         if len(order[0]['ordId']) < 1:
             print("ERROR - Failed to complete the transaction")
         # send notification ??
