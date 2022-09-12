@@ -1,5 +1,10 @@
 import requests
 from market_maker import MarketMaker
+from os import getenv
+
+APIKEY = getenv("APIKEY")
+APISECRET = getenv("APISECRET")
+PASS = getenv("PASS")
 
 
 def new_coin_alert():
@@ -14,7 +19,7 @@ def new_coin_alert():
             print(new_coin)
             input_a = new_list_of_coins
             n_of_coins = new_n_of_coins
-            MarketMaker(details=new_coin)
+            MarketMaker(details=new_coin, APISECRET=APISECRET, APIKEY=APIKEY, PASS=PASS).open_position(size_of_balance=1)
             print("NEW COIN ALERT")
 
         print("Checking for new coin...")
