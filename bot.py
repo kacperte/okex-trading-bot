@@ -35,26 +35,24 @@ class OkexBot:
 
     def get_header(self, request='GET', endpoint='', body=''):
         cur_time = self.get_time()
-        header = dict()
-        header['CONTENT-TYPE'] = "application/json"
-        header['OK-ACCESS-KEY'] = APIKEY
-        header['OK-ACCESS-SIGN'] = self.signature(cur_time, request, endpoint, body, APISECRET)
-        header['OK-ACCESS-TIMESTAMP'] = cur_time
-        header['OK-ACCESS-PASSPHRASE'] = PASS
-        return header
+        return {
+            'CONTENT-TYPE': "application/json",
+            'OK-ACCESS-KEY': APIKEY,
+            'OK-ACCESS-SIGN': self.signature(cur_time, request, endpoint, body, APISECRET),
+            'OK-ACCESS-TIMESTAMP': cur_time,
+            'OK-ACCESS-PASSPHRASE': PASS,
+        }
 
-    def check_balance(self):
+    def get_balance(self, currency: str):
         url = self.baseURL + "/api/v5/account/balance"
         header = self.get_header("GET", "/api/v5/account/balance")
         response = requests.get(url, headers=header).json()['data'][0]['details']
-        balance_status = list()
+        balance_status = dict()
         for obj in response:
-            temp_dict = dict()
-            temp_dict['id'] = obj['ccy']
-            temp_dict['balance'] = obj['availBal']
-            balance_status.append(temp_dict)
+            if obj['ccy'] != currency:
+                continue
 
-        return balance_status
+            return obj['availBal']
 
     def place_market_order(self, pair, side, amount, tdMode='cash'):
         endpoint = '/api/v5/trade/order'
